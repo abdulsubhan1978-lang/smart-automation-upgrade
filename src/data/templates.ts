@@ -236,5 +236,27 @@ export const COMMUNITY_TEMPLATES: TemplateDefinition[] = [
     edges: [
       { id: 'e1-2', source: '1', target: '2' }
     ]
+  },
+  {
+    name: 'Smart Railway Patrol',
+    description: 'Autonomous AIoT-based railway hazard detection system. Senses obstacles and defects, decides actions, and reports to cloud.',
+    category: 'IoT',
+    difficulty: 'Advanced',
+    estimated_time: '15 mins',
+    author: 'abdul_zeeshan',
+    variables: {},
+    nodes: [
+      { id: '1', type: 'custom', position: { x: 100, y: 150 }, data: { node_type: 'webhook', label: 'ESP32-CAM Sensor (Sense)', config: { url: 'https://dummyjson.com/posts/add' } } },
+      { id: '2', type: 'custom', position: { x: 400, y: 150 }, data: { node_type: 'ai_prompt', label: 'Hazard Analysis (Decide)', config: { prompt: 'Analyze sensor data and image for obstacles or structural rail defects: ${esp32_cam_sensor.data}', system_prompt: 'You are an AIoT hazard detection system.' } } },
+      { id: '3', type: 'custom', position: { x: 700, y: 150 }, data: { node_type: 'condition', label: 'Threat Detected?', config: { condition: "${hazard_analysis.threat} == true" } } },
+      { id: '4', type: 'custom', position: { x: 1000, y: 50 }, data: { node_type: 'api_call', label: 'Stop Rover (Act)', config: { url: 'https://dummyjson.com/posts/1', method: 'POST', body: { action: 'stop_and_capture' } } } },
+      { id: '5', type: 'custom', position: { x: 1000, y: 250 }, data: { node_type: 'database', label: 'Cloud Report (Report)', config: { operation: 'insert', table: 'hazards', data: { status: 'alert', evidence: '${hazard_analysis.evidence}' } } } }
+    ],
+    edges: [
+      { id: 'e1-2', source: '1', target: '2' },
+      { id: 'e2-3', source: '2', target: '3' },
+      { id: 'e3-4', source: '3', target: '4', sourceHandle: 'true' },
+      { id: 'e3-5', source: '3', target: '5', sourceHandle: 'true' }
+    ]
   }
 ];
